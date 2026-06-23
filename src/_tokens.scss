@@ -1,0 +1,59 @@
+// Design tokens ported from the HDX v2 redesign foundations
+// (OCHA-DAP/hdx-ckan, feature/HDXDESIGN-16-redesign-implementation,
+// ckanext-hdx_theme/ckanext/hdx_theme/hdx-styles/src/common/less/v2/{colors,typography,spacing,radius,elevation}.less)
+:root {
+  // brand green
+  --hdx-brand-5: #269777;
+  --hdx-brand-7: #18614c;
+  --hdx-brand-85: #0b2d24;
+
+  // primary blue
+  --hdx-primary-5: #1862d8;
+  --hdx-primary-7: #0e3b82;
+  --hdx-primary-9: #05142b;
+
+  // neutrals
+  --hdx-neutral-0: #ffffff;
+  --hdx-neutral-01: #fafbfb;
+  --hdx-neutral-1: #ebeff0;
+  --hdx-neutral-2: #d8e0e1;
+  --hdx-neutral-3: #c4d0d1;
+  --hdx-neutral-5: #9db1b3;
+  --hdx-neutral-6: #7e8e8f;
+  --hdx-neutral-7: #5e6a6b;
+  --hdx-neutral-8: #3f4748;
+  --hdx-neutral-85: #2f3536;
+  --hdx-neutral-95: #101212;
+
+  // feedback - error
+  --hdx-error-5: #c44536;
+
+  // spacing (4px base unit)
+  --hdx-space-1: 0.25rem;
+  --hdx-space-2: 0.5rem;
+  --hdx-space-3: 0.75rem;
+  --hdx-space-4: 1rem;
+
+  // corner radius
+  --hdx-radius-sm: 2px;
+  --hdx-radius-md: 4px;
+
+  // elevation
+  --hdx-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --hdx-shadow-md: 0 4px 10px rgba(0, 0, 0, 0.12);
+  --hdx-shadow-lg: 0 8px 35px rgba(0, 0, 0, 0.16);
+
+  // typography
+  --hdx-font-body: 'Roboto', sans-serif;
+  --hdx-fs-xs: 0.75rem;   // 12px
+  --hdx-fs-s: 0.875rem;   // 14px
+  --hdx-fs-m: 1rem;       // 16px
+  --hdx-fs-l: 1.125rem;   // 18px
+  --hdx-fs-xl: 1.25rem;   // 20px
+  --hdx-fs-2xl: 1.5rem;   // 24px
+  --hdx-fw-regular: 400;
+  --hdx-fw-medium: 500;
+  --hdx-fw-semibold: 600;
+  --hdx-fw-bold: 700;
+  --hdx-lh-normal: 1.3;
+}

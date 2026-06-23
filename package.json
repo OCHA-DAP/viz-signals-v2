@@ -1,0 +1,23 @@
+{
+  "name": "viz-signals",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.4.2",
+    "d3": "^7.8.5",
+    "d3-svg-legend": "^2.25.6",
+    "mapbox-gl": "^2.15.0",
+    "papaparse": "^5.4.1",
+    "sass": "^1.68.0",
+    "svelte": "^4.0.5",
+    "svelte-preprocess": "^5.0.4",
+    "svelte-range-slider-pips": "^2.3.1",
+    "vite": "^4.4.5"
+  }
+}
