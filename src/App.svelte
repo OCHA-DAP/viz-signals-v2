@@ -304,7 +304,9 @@
       <span class='error-msg'>{errorMsg}</span>
 
       <div class='buttons'>
-        <button class='btn-reset' on:click={reset}>Reset</button>
+        <button type="button" class="c-button c-button--tertiary c-button--size-m" on:click={reset}>
+          <span class="c-button__label">Reset</span>
+        </button>
       </div>
 
       <div class='logos'>
