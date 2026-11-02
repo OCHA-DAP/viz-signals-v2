@@ -7,7 +7,7 @@
   export let open = false;
   export let onClose = () => {};
 
-  let dateFormat = d3.utcFormat('%b %d, %Y');
+  let dateFormat = d3.utcFormat('%d %b %Y');
 </script>
 
 <div class='popup' style:display={open ? 'block' : 'none'} style:opacity={open ? 1 : 0}>

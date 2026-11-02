@@ -35,6 +35,20 @@
   //set slider filter to show last 3 months of data
   sliderDefault = [numMonths-3, numMonths];
 
+  $: numCountries = new Set($signalsData.map(d => d.iso3)).size;
+
+  //committed date range as "Aug – Nov 2026", "Nov 2025 – Feb 2026" or "Sep 2026"
+  $: periodLabel = formatPeriod($filters.date_value);
+
+  function formatPeriod(dates) {
+    if (!dates || dates.length < 2) return '';
+    const [start, end] = dates;
+    const monthYear = d3.utcFormat('%b %Y');
+    if (monthYear(start) === monthYear(end)) return monthYear(end);
+    const startLabel = start.getUTCFullYear() === end.getUTCFullYear() ? d3.utcFormat('%b')(start) : monthYear(start);
+    return `${startLabel} – ${monthYear(end)}`;
+  }
+
   loadAllSignals()
     .then(({ signals, namesData }) => dataLoaded(signals, namesData))
     .catch(error => {
@@ -43,24 +57,20 @@
     });
 
   function dataLoaded(signals, namesData) {
-    //set available date range
-    endDate = new Date();
-    startDate = new Date(endDate);
-    startDate.setMonth(endDate.getMonth() - numMonths);
+    //set available date range in whole months, ending with the current month
+    createDateSlider(new Date());
+    startDate = sliderDates[0];
+    endDate = monthEnd(sliderDates[numMonths]);
 
-    //set starting date range - 3 months prior to latest date by default
-    defaultStartDate = new Date(endDate);
-    defaultStartDate.setMonth(endDate.getMonth() - 3);
+    //set starting date range - last 3 months by default
+    defaultStartDate = sliderDates[numMonths-3];
 
     //filter full data within available date range
     const data = signals.filter(d => new Date(d.date).getTime() >= startDate.getTime());
     rawData.set(data);
 
-    //filter set of data within starting date range, for building the regions list
-    const initialSignalsData = signals.filter(d => new Date(d.date).getTime() >= defaultStartDate.getTime());
-
-    createFilters(initialSignalsData, namesData);
-    createDateSlider();
+    //build the regions list from the full date range so widening the slider never hides a region
+    createFilters(data, namesData);
 
     draftDate = [defaultStartDate.getTime(), endDate.getTime()];
     draftDateValue = [defaultStartDate, endDate];
@@ -76,9 +86,9 @@
     checkResults();
   }
 
-  function createFilters(initialSignalsData, namesData) {
+  function createFilters(data, namesData) {
     //get list of regions
-    let regionArray = initialSignalsData.map(d => d.region);
+    let regionArray = data.map(d => d.region);
     regionArray.sort();
     regionArray = [...new Set(regionArray)];
     regionArray.unshift('All regions');
@@ -95,21 +105,26 @@
     indicatorChecked = Object.fromEntries(indicators.map(i => [i, true]));
   }
 
-  function createDateSlider() {
-    const listLength = numMonths + 1; // months
+  //one slider step per month (1st of the month, UTC), from numMonths before latestDate up to its month
+  function createDateSlider(latestDate) {
     const dates = [];
-    for(let i = 0; i < listLength; i++) {
-      const itemDate = new Date(startDate);
-      itemDate.setMonth(itemDate.getMonth() + i);
-      dates.push(itemDate);
+    for(let i = numMonths; i >= 0; i--) {
+      dates.push(new Date(Date.UTC(latestDate.getUTCFullYear(), latestDate.getUTCMonth() - i, 1)));
     }
     sliderDates = dates;
   }
 
+  //last millisecond of the month, so the end handle includes the whole month
+  function monthEnd(date) {
+    return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 1) - 1);
+  }
+
   function onDateSelect(e) {
     const selected = e.detail.values;
-    draftDate = [new Date(sliderDates[selected[0]]).getTime(), new Date(sliderDates[selected[1]]).getTime()];
-    draftDateValue = [sliderDates[selected[0]], sliderDates[selected[1]]];
+    const start = sliderDates[selected[0]];
+    const end = monthEnd(sliderDates[selected[1]]);
+    draftDate = [start.getTime(), end.getTime()];
+    draftDateValue = [start, end];
     scheduleCommit();
   }
 
@@ -147,7 +162,8 @@
   }
 
   function checkResults() {
-    hasHRP = $signalsData.some(d => d['hrp_location'] === 'True');
+    //never disable the checkbox while it's ticked, or the user can't untick it
+    hasHRP = hrpOnly || $signalsData.some(d => d['hrp_location'] === 'True');
     errorMsg = $signalsData.length > 0 ? '' : 'There are no signals to display, please widen your selection';
   }
 
@@ -234,9 +250,9 @@
   }
 
   function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
     return `${year}/${month}/${day}`;
   }
 
@@ -261,6 +277,44 @@
 
   <div class='grid-container'>
     <div class='col-3 filter-list'>
+      {#if $signalsData.length && !errorMsg}
+        <div class='c-kpi-row'>
+          <div class='c-kpi-card'>
+            <div class='c-kpi-card__header'><span class='c-kpi-card__label'>Signals</span></div>
+            <span class='c-kpi-card__value'>{$signalsData.length}</span>
+          </div>
+          <div class='c-kpi-card'>
+            <div class='c-kpi-card__header'><span class='c-kpi-card__label'>Countries</span></div>
+            <span class='c-kpi-card__value'>{numCountries}</span>
+          </div>
+        </div>
+      {/if}
+      {#if errorMsg}
+        <span class='error-msg'>{errorMsg}</span>
+      {/if}
+
+      <div class='date-filter'>
+        <h5>Date range{periodLabel ? ':' : ''} <span class='date-filter__period'>{periodLabel}</span></h5>
+        <div class='slider-container'>
+          {#if sliderDates.length>0}
+            <RangeSlider
+              all='pips'
+              id='dateSlider'
+              first='label'
+              float
+              last='label'
+              pips
+              max={numMonths}
+              range
+              step={1}
+              bind:values={sliderDefault}
+              on:change={onDateSelect}
+              {formatter}
+            />
+          {/if}
+        </div>
+      </div>
+
       <h5>Filter by:</h5>
       {#if regions.length}
         <ul>
@@ -281,27 +335,6 @@
           {/each}
         </ul>
       {/if}
-
-      <div class='slider-container'>
-        {#if sliderDates.length>0}
-          <RangeSlider
-            all='pips'
-            id='dateSlider'
-            first='label'
-            float
-            last='label'
-            pips
-            max={numMonths}
-            range
-            step={1}
-            bind:values={sliderDefault}
-            on:change={onDateSelect}
-            {formatter}
-          />
-        {/if}
-      </div>
-
-      <span class='error-msg'>{errorMsg}</span>
 
       <div class='buttons'>
         <button type="button" class="c-button c-button--tertiary c-button--size-m" on:click={reset}>

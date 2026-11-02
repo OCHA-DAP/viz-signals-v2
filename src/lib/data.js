@@ -35,11 +35,14 @@ export async function loadAllSignals() {
 
   signals.forEach(signal => {
     const match = coordsByIso3.get(signal.iso3);
-    const hasCoords = match && (match.Latitude !== 'NA' || match.Longitude !== 'NA');
+    const hasCoords = match && match.Latitude !== 'NA' && match.Longitude !== 'NA';
     signal.lat = hasCoords ? +match.Latitude : null;
     signal.lon = hasCoords ? +match.Longitude : null;
     signal.indicator_title = nameByIndicatorId.get(signal.indicator_id) ?? null;
   });
 
-  return { signals, coordsData: coords, namesData: indicatorTitles };
+  //signals without coordinates (e.g. regional signals like LAC) can't be placed on the map
+  const mappableSignals = signals.filter(d => d.lat !== null);
+
+  return { signals: mappableSignals, coordsData: coords, namesData: indicatorTitles };
 }
