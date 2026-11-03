@@ -218,7 +218,7 @@
 	function zoomToBounds() {
 		//zoom map to bounds
 		let mapPadding = (isMobile()) ? {top: 20, right: 20, bottom: 20, left: 20} : {top: 100, right: 80, bottom: 150, left: 80};
-		if (signalsGeoData !== undefined) {
+		if (signalsGeoData !== undefined && signalsGeoData.features.length > 0) {
 		  let bounds = new mapboxgl.LngLatBounds();
 			signalsGeoData.features.forEach(function(feature) {
 			  bounds.extend(feature.geometry.coordinates);

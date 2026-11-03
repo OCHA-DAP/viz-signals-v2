@@ -14,7 +14,7 @@ html {
   font-family: var(--hdx-font-body), 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: var(--hdx-fs-m);
   font-weight: var(--hdx-fw-regular);
-  line-height: 18px;
+  line-height: var(--hdx-lh-normal);
 
 /*  font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -52,8 +52,9 @@ h1 {
 
 h2 {
   color: var(--hdx-primary-5);
-  font-weight: var(--hdx-fw-bold);
-  font-size: var(--hdx-fs-l);
+  font-weight: var(--hdx-fw-semibold);
+  font-size: var(--hdx-fs-xl);
+  line-height: var(--hdx-lh-normal);
   &.header {
     background-color: var(--hdx-neutral-01);
     border-bottom: 1px solid var(--hdx-neutral-2);
@@ -70,11 +71,14 @@ h2 {
 h3 {
   color: var(--hdx-neutral-95);
   font-size: var(--hdx-fs-l);
-  font-weight: var(--hdx-fw-bold);
-  line-height: 21px;
+  font-weight: var(--hdx-fw-semibold);
+  line-height: var(--hdx-lh-normal);
   margin: 0px 0px 10px;
 }
 h4 {
+  font-size: var(--hdx-fs-m);
+  font-weight: var(--hdx-fw-semibold);
+  line-height: var(--hdx-lh-normal);
   margin-bottom: 10px;
   margin-top: 0;
 }
@@ -190,8 +194,9 @@ button {
   box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 
+//right padding = left padding + the 30px right margin the tiles use, so the slider centres under them
 .slider-container {
-  padding: 20px 35px 15px 12px;
+  padding: 20px 42px 15px 12px;
   width: 100%;
 }
 
@@ -202,6 +207,10 @@ header {
   padding: 10px 30px;
   a {
     color: var(--hdx-neutral-0);
+    &:hover {
+      color: var(--hdx-neutral-0);
+      text-decoration: none;
+    }
   }
 }
 
@@ -229,6 +238,7 @@ header {
   }
   label {
     display: inline-block;
+    font-size: var(--hdx-fs-s);
     margin: 0 18px 5px;
     input[type='checkbox'] {
       accent-color: var(--hdx-primary-5);
@@ -248,7 +258,9 @@ header {
 }
 
 .c-button {
+  -webkit-appearance: none;
   align-items: center;
+  appearance: none;
   border-radius: var(--hdx-radius-sm);
   box-sizing: border-box;
   cursor: pointer;
@@ -261,6 +273,15 @@ header {
   text-decoration: none;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
   white-space: nowrap;
+  &:focus-visible {
+    outline: 2px solid var(--hdx-primary-5);
+    outline-offset: 2px;
+  }
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   &--secondary {
     background-color: var(--hdx-neutral-0);
     border: 1px solid var(--hdx-primary-5);
@@ -281,6 +302,12 @@ header {
       border: 1.5px solid var(--hdx-neutral-8);
       color: var(--hdx-neutral-8);
     }
+    &:active {
+      background-color: var(--hdx-neutral-01);
+      border: 1px solid var(--hdx-neutral-95);
+      box-shadow: none;
+      color: var(--hdx-neutral-8);
+    }
   }
   &--size-s {
     font-size: var(--hdx-fs-xs);
@@ -289,16 +316,61 @@ header {
   }
   &--size-m {
     font-size: var(--hdx-fs-s);
+    gap: var(--hdx-space-13);
     height: 2.125rem;
     padding: var(--hdx-space-2) var(--hdx-space-2);
   }
 }
+.c-kpi-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--hdx-space-4);
+  margin: 10px 30px 20px 0;
+}
+.c-kpi-card {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--hdx-space-3);
+  background-color: var(--hdx-neutral-0);
+  border: 1px solid var(--hdx-neutral-2);
+  border-radius: var(--hdx-radius-sm);
+  &__header {
+    align-items: center;
+    display: flex;
+    gap: var(--hdx-space-2);
+    margin-bottom: var(--hdx-space-2);
+  }
+  &__label {
+    color: var(--hdx-neutral-85);
+    font-family: var(--hdx-font-body);
+    font-size: var(--hdx-fs-m);
+    font-weight: var(--hdx-fw-regular);
+    line-height: var(--hdx-lh-normal);
+  }
+  &__value {
+    color: var(--hdx-neutral-85);
+    display: block;
+    font-family: var(--hdx-font-display);
+    font-size: var(--hdx-fs-2xl);
+    font-weight: var(--hdx-fw-bold);
+    line-height: var(--hdx-lh-normal);
+  }
+}
+
+.date-filter {
+  margin: 0 0 20px;
+  &__period {
+    color: var(--hdx-neutral-85);
+    font-weight: var(--hdx-fw-medium);
+  }
+}
+
 .error-msg {
   color: var(--hdx-error-5);
   display: block;
   font-weight: var(--hdx-fw-bold);
-  margin: 0 30px 10px 0;
-  text-align: right;
+  margin: 10px 30px 20px 0;
 }
 
 .map {
@@ -316,6 +388,9 @@ header {
   right: 50px;
   width: 175px;
   z-index: 2;
+  h4 {
+    font-size: var(--hdx-fs-s);
+  }
   circle {
     fill: none;
     stroke: var(--hdx-primary-5);
@@ -353,7 +428,7 @@ header {
   font-size: var(--hdx-fs-m);
   font-weight: var(--hdx-fw-regular);
   left: 50%;
-  line-height: 18px;
+  line-height: var(--hdx-lh-normal);
   padding: 20px;
   position: absolute;
   height: auto;
